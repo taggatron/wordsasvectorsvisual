@@ -63,6 +63,7 @@ const sequencePrevBtn = document.getElementById("sequence-prev");
 const sequenceNextBtn = document.getElementById("sequence-next");
 const sequenceAutoBtn = document.getElementById("sequence-auto");
 const sequenceStatusEl = document.getElementById("sequence-status");
+const AXIS_LABEL_REVEAL_THRESHOLD = 4;
 
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(45, host.clientWidth / host.clientHeight, 0.1, 80);
@@ -94,6 +95,7 @@ scene.add(grid);
 
 const axesGroup = new THREE.Group();
 scene.add(axesGroup);
+const axisLabels = [];
 
 addAxis(
   new THREE.Vector3(-3.5, -1.2, 0),
@@ -459,6 +461,7 @@ function setWordVisible(word, visible) {
   node.group.visible = visible;
   refreshRelationVisibility();
   updateWordChipState();
+  updateAxisLabelVisibility();
 }
 
 function isWordVisible(word) {
@@ -487,7 +490,7 @@ function updateWordChipState() {
 }
 
 function updateBuilderStatus() {
-  const visibleCount = words.filter((wordDef) => isWordVisible(wordDef.word)).length;
+  const visibleCount = getVisibleWordCount();
 
   if (addWordStatusEl) {
     addWordStatusEl.textContent = `${visibleCount} of ${words.length} words visible`;
@@ -496,6 +499,18 @@ function updateBuilderStatus() {
   if (addWordBtn) {
     addWordBtn.disabled = visibleCount >= words.length;
     addWordBtn.textContent = visibleCount >= words.length ? "All Words Added" : "Add Next Word";
+  }
+}
+
+function getVisibleWordCount() {
+  return words.filter((wordDef) => isWordVisible(wordDef.word)).length;
+}
+
+function updateAxisLabelVisibility() {
+  const showAxisLabels = getVisibleWordCount() >= AXIS_LABEL_REVEAL_THRESHOLD;
+
+  for (const label of axisLabels) {
+    label.visible = showAxisLabels;
   }
 }
 
@@ -532,7 +547,9 @@ function addAxis(start, end, color, labelText, textColor, labelOffset = new THRE
 
   const label = makeTextSprite(labelText, textColor, "rgba(255, 255, 255, 0.72)", 24, 15, 0.0056);
   label.position.copy(end.clone().add(labelOffset));
+  label.visible = false;
   axesGroup.add(label);
+  axisLabels.push(label);
 }
 
 function moveSequence(direction) {

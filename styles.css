@@ -177,12 +177,6 @@ h1 {
   background: rgba(255, 255, 255, 0.7);
 }
 
-.axis-pill {
-  background: linear-gradient(135deg, rgba(69, 123, 157, 0.12), rgba(42, 157, 143, 0.12));
-  border-color: rgba(53, 98, 125, 0.33);
-  color: #30495d;
-}
-
 .panel {
   width: min(1200px, 94vw);
   margin-left: auto;
@@ -374,6 +368,12 @@ h3 {
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+@media (min-width: 1180px) {
+  .app {
+    padding-top: 4rem;
   }
 }
 
